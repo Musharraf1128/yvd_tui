@@ -56,7 +56,7 @@ source ~/.zshrc
 The following command will download, build, and install the `yvd` command into your Go toolchain's bin directory. Go ahead and run it:
 
 ```bash
-go install github.com/Musharraf1128/yvd_tui@latest
+go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 Run `yvd --help` on your command line to make sure the installation worked. If it did, you're ready to go!
 
@@ -116,24 +116,24 @@ yvd 'https://...' -q 0 -f mp3
 
 ---
 
-## Upgrading
+### Upgrading
 
 If you just installed the CLI, it's already upgraded!
 
 To upgrade to the latest version in the future, simply re-run:
 
 ```bash
-go install github.com/Musharraf1128/yvd_tui@latest
+go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 
-## Troubleshooting Upgrading
+### Troubleshooting Upgrading
 
 **1. Bypass the proxy**
 
 If you keep getting the same upgrade message, you may be pulling from an old cache.
 
 ```bash
-GOPROXY=direct go install github.com/Musharraf1128/yvd_tui@latest
+GOPROXY=direct go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 
 **2. Reinstall**
