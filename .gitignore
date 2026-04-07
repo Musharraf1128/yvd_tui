@@ -1,0 +1,40 @@
+# Binaries
+yvd
+yvd.exe
+*.exe
+*.test
+*.out
+bin/
+
+# Temporary and Cache
+tmp/
+.cache/
+
+# OS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Test coverage
+coverage.out
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Download artifacts from actual usage
+downloads/
+*.mp4
+*.webm
+*.mp3
+*.m4a
+*.mkv
+*.part
+*.ytdl
+
+# Modules
+vendor/
