@@ -1,5 +1,7 @@
 # Binaries
+yvd
 yvd.exe
+yvd_cli
 *.exe
 *.test
 *.out
