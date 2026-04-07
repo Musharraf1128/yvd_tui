@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -33,7 +34,6 @@ func PrettifyError(err error) string {
 	// No yt-dlp error line found — return only the first line to avoid noise.
 	return strings.SplitN(raw, "\n", 2)[0]
 }
-
 
 // EnsureInstalled makes sure yt-dlp binary is available.
 // First checks if it's on PATH (pip/package manager install), then
@@ -146,7 +146,7 @@ func Download(ctx context.Context, opts DownloadOptions, onProgress func(Progres
 	// Output filename template.
 	tmpl := "%(title)s.%(ext)s"
 	if opts.OutputDir != "" {
-		tmpl = opts.OutputDir + "/" + tmpl
+		tmpl = filepath.Join(opts.OutputDir, tmpl)
 	}
 	dl = dl.Output(tmpl)
 
