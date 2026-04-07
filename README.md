@@ -1,25 +1,53 @@
 # YVD — YouTube Video Downloader
 
-This is the command line tool for downloading videos directly from YouTube and other sites via yt-dlp. It features a beautiful, inline terminal UI and smart format selection.
+A terminal-based video downloader with a beautiful, inline TUI. Download from YouTube and 1000+ other sites via `yt-dlp`, with smart quality/format selection or a single direct command.
 
 ⭐ Hit the repo with a star if you're enjoying YVD ⭐
 
 ## Table of Contents
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
   - [1. Install Go](#1-install-go)
   - [2. Install the YVD CLI](#2-install-the-yvd-cli)
 - [Usage](#usage)
   - [Interactive Mode](#interactive-mode)
   - [Direct Mode](#direct-mode)
-- [Troubleshooting Upgrading](#troubleshooting-upgrading)
+- [Upgrading](#upgrading)
+- [Troubleshooting](#troubleshooting)
 - [About](#about)
+
+---
+
+## Prerequisites
+
+| Dependency | Required | Notes |
+|---|---|---|
+| **Go** | ✅ Yes | v1.21 or newer |
+| **yt-dlp** | Auto-managed | Downloaded automatically on first run if not on PATH |
+| **ffmpeg** | For `video + audio` only | Needed to merge separate video and audio streams into mp4/mkv. Not needed for audio-only downloads. |
+
+**Install ffmpeg:**
+
+```bash
+# macOS (Homebrew)
+brew install ffmpeg
+
+# Ubuntu / Debian / WSL
+sudo apt install ffmpeg
+
+# Arch Linux
+sudo pacman -S ffmpeg
+
+# Windows (Scoop)
+scoop install ffmpeg
+```
 
 ---
 
 ## Installation
 
 ### 1. Install Go
-To use the YVD CLI, you need an up-to-date Golang toolchain installed on your system.
+To use the YVD CLI, you need Go **v1.21 or newer** installed on your system.
 
 There are two main installation methods that we recommend:
 
@@ -30,134 +58,131 @@ curl -sS https://webi.sh/golang | sh
 ```
 Read the output of the command and follow any instructions.
 
-**Option 2 (any platform, including Windows/PowerShell):** Use the [official Golang installation instructions](https://go.dev/dl/). 
+**Option 2 (any platform, including Windows/PowerShell):** Use the [official Golang installation instructions](https://go.dev/dl/).
 
 After installing Golang, open a new shell session and run `go version` to make sure everything works. If it does, move on to step 2.
 
 **Optional troubleshooting:**
 
-If you already had a version of Go installed a different way, on Linux/macOS you can run `which go` to find out where it's installed, and (if needed) remove the old version manually.
-
-If you're getting a "command not found" error after installation, it's most likely because the directory containing the `go` program isn't in your PATH. You need to add the directory to your PATH by modifying your shell's configuration file:
+If you're getting a `command not found` error after installation, it's most likely because the directory containing the `go` program isn't in your PATH:
 
 ```bash
 # For Linux/WSL
-echo 'export PATH=$PATH:$HOME/.local/opt/go/bin' >> ~/.bashrc
-# Next, reload your shell configuration
-source ~/.bashrc
+echo 'export PATH=$PATH:$HOME/.local/opt/go/bin' >> ~/.bashrc && source ~/.bashrc
 
 # For macOS
-echo 'export PATH=$PATH:$HOME/.local/opt/go/bin' >> ~/.zshrc
-# Next, reload your shell configuration
-source ~/.zshrc
+echo 'export PATH=$PATH:$HOME/.local/opt/go/bin' >> ~/.zshrc && source ~/.zshrc
 ```
 
 ### 2. Install the YVD CLI
-The following command will download, build, and install the `yvd` command into your Go toolchain's bin directory. Go ahead and run it:
+The following command will download, build, and install the `yvd` command into your Go bin directory:
 
 ```bash
 go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
-Run `yvd --help` on your command line to make sure the installation worked. If it did, you're ready to go!
+
+Run `yvd --help` to confirm the installation worked.
 
 **Optional troubleshooting:**
 
-If you're getting a "command not found" error for `yvd help`, it's most likely because the directory containing the program isn't in your PATH. You probably need to add `$HOME/go/bin` to your PATH:
+If `yvd` is not found after installing, add `$HOME/go/bin` to your PATH:
 
 ```bash
 # For Linux/WSL
-echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
-# Next, reload your shell configuration
-source ~/.bashrc
+echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc && source ~/.bashrc
 
 # For macOS
-echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.zshrc
-# Next, reload your shell configuration
-source ~/.zshrc
+echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.zshrc && source ~/.zshrc
 ```
 
 ---
 
 ## Usage
 
-By default, downloads will be saved directly to your system's `~/Downloads` folder.
+By default, downloads are saved to your system's `~/Downloads` folder.
 
-**Always quote your URLs.** YouTube URLs contain `?` and `&` characters, which zsh and bash treat as glob operators.
+> **Always quote your URLs.** YouTube URLs contain `?` and `&` characters which zsh and bash treat as special characters.
 
 ```bash
-# Wrong
+# ❌ Wrong
 yvd https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
-# Correct
+# ✅ Correct
 yvd 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 ```
 
-### Interactive mode
+### Interactive Mode
 
-Launch the full interactive TUI:
+Launch the full interactive TUI by passing just a URL:
 
 ```bash
 yvd 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 ```
 
-Use your arrow keys to select your preferred quality (`1080p`, `720p`, etc) and format (`video + audio`, `audio only`).
+Use arrow keys to select your preferred quality (`1080p`, `720p`, etc.) and format:
+
+| Format | Description | Needs ffmpeg? |
+|---|---|---|
+| `video + audio` | Merged mp4/mkv — best quality | ✅ Yes |
+| `video only` | Raw video stream, no audio | ❌ No |
+| `audio only` | Best audio stream (m4a) | ❌ No |
 
 ### Direct Mode
 
-You can bypass the TUI entirely if you know what you want to download. Supply both `--quality` / `-q` and `--format` / `-f`:
+Skip the TUI entirely by supplying both `--quality` / `-q` and `--format` / `-f`:
 
 ```bash
-# Download best video up to 1080p, merged into an mp4 container
+# Download best video up to 1080p, merged into mp4
 yvd 'https://...' -q 1080 -f mp4
 
 # Download audio only as mp3
 yvd 'https://...' -q 0 -f mp3
+
+# Supported audio formats: mp3, m4a, aac, flac, wav, ogg, opus
 ```
 
 ---
 
-### Upgrading
+## Upgrading
 
-If you just installed the CLI, it's already upgraded!
-
-To upgrade to the latest version in the future, simply re-run:
+To upgrade to the latest version, simply re-run the install command:
 
 ```bash
 go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 
-### Troubleshooting Upgrading
+---
 
-**1. Bypass the proxy**
+## Troubleshooting
 
-If you keep getting the same upgrade message, you may be pulling from an old cache.
+**`does not contain package github.com/Musharraf1128/yvd_tui/cmd/yvd`**
+
+The Go module proxy may have cached an old release. Bypass it:
 
 ```bash
 GOPROXY=direct go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 
-**2. Reinstall**
+**Upgrade not picking up the latest version**
 
-If that doesn't work, try a fresh install:
-
-Locate the binary file:
+Force a fresh install:
 
 ```bash
-which yvd
-```
-
-Carefully remove the binary file after confirming the path is correct:
-
-```bash
+# Locate and remove the old binary
 rm "$(which yvd)"
+
+# Reinstall directly from source
+GOPROXY=direct go install github.com/Musharraf1128/yvd_tui/cmd/yvd@latest
 ```
 
-Clean install: Repeat the installation step.
+**`video + audio` download failing or no audio in output**
+
+Make sure `ffmpeg` is installed — YVD uses it to merge separate video and audio streams into a single file. See the [Prerequisites](#prerequisites) section above.
 
 ---
 
 ## About
 
-A beautiful, inline terminal UI tool for downloading videos natively via the Charm ecosystem (Bubbletea / Lipgloss) and `go-ytdlp`.
+Built with the [Charm](https://charm.sh) ecosystem — [Bubbletea](https://github.com/charmbracelet/bubbletea), [Bubbles](https://github.com/charmbracelet/bubbles), [Lipgloss](https://github.com/charmbracelet/lipgloss) — and [go-ytdlp](https://github.com/lrstanley/go-ytdlp).
 
 License: MIT
